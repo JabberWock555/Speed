@@ -15383,7 +15383,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waypointTracker: {fileID: 1544028630}
   waypointOffest: 0
-  distanceOffest: 5
   angleThreshold: 15
   nodes: []
 --- !u!114 &579928815
@@ -15398,7 +15397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcaa0c9867c1d4ff5ad65c4570a0f63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 100
+  maxSpeed: 120
   maxReverseSpeed: 45
   accelerationMultiplier: 10
   maxSteeringAngle: 27

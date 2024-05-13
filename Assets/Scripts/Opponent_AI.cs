@@ -8,6 +8,7 @@ public class Opponent_AI : MonoBehaviour
     [SerializeField] private WaypointTracker waypointTracker;
     [SerializeField] [Range(0,10)] private int waypointOffest = 0;
     [SerializeField] [Range(0,100)] private float angleThreshold = 0;
+    [SerializeField] [Range(0,10)] private float reachThreshold;
     private int currentWaypointIndex = 0 ;
     public Transform[] nodes;
     private bool isDeaccelerate = false;
@@ -41,8 +42,10 @@ public class Opponent_AI : MonoBehaviour
         if (!nodes[currentWaypointIndex]) carController.Handbrake();
 
         if(direction != Vector3.zero){
+
             float angle = Vector3.SignedAngle(transform.forward, direction, Vector3.up);
             Debug.Log("Angle : "+angle);
+
             if(angle > angleThreshold){
                 carController.Brakes();
                 carController.TurnRight();
@@ -61,8 +64,14 @@ public class Opponent_AI : MonoBehaviour
     private void CalculateDistanceInWaypoints(){
         if(nodes.Length ==0 ) return;
 
+        float speed = carController.carSpeed; // Assuming CarController has a method to get current speed
+        int indexOffset = Mathf.Clamp((int)(speed / 10), 0, nodes.Length - 1); // Calculate offset as a function of speed
+
+        // Make sure we do not exceed the array length
+        int targetIndex = (currentWaypointIndex + indexOffset) % nodes.Length;
+
         Vector3 pos = transform.position;
-        targetWaypoint  = nodes[currentWaypointIndex + waypointOffest];
+        targetWaypoint  = nodes[targetIndex];
         direction = targetWaypoint.position - pos;
 
         if( direction.magnitude < distance ){
@@ -81,8 +90,10 @@ public class Opponent_AI : MonoBehaviour
     private void CalculateWayPointOffset(){
         if(nodes.Length ==0) return;
 
-        if(carController.carSpeed > 100) waypointOffest = 10;
-        else waypointOffest = 8;
+        if ((nodes[currentWaypointIndex].position - transform.position).magnitude < reachThreshold)
+        {
+            currentWaypointIndex = (currentWaypointIndex + 1) % nodes.Length;
+        }
     }
 
     private void OnDrawGizmos() {
